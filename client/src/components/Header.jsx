@@ -1,15 +1,17 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux';
+import { Link,useNavigate } from 'react-router-dom'
+import { useSelector, useDispatch,  } from 'react-redux';
+import { signOut } from '../redux/user/userSlice';
 
 const Header = () => {
   const dispatch = useDispatch();
   const {currentUser} = useSelector((state)=> state.user)
-
+  const navigate = useNavigate();
   const handleSignOut = async () => {
     try {
       await fetch('/api/auth/signout');
       dispatch(signOut())
+      navigate('/')
     } catch(error){
       console.log(error)
     }
