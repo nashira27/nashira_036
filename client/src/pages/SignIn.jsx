@@ -1,24 +1,27 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useState } from 'react';
+import { signInStart, signInSuccess,signInFailure } from '../redux/user/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 const SignIn = () => {
-  
-  const [ formData, setFormData ] = useState({})
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(false)
+
+  const [formData, setFormData] = useState({});
+  const { loading, error } = useSelector((state)=>state.user)
 
   const navigate = useNavigate();
+  const dispatch = useDispatch()
 
-  const handleChange = (e) => {
+  const handleChange = (e) => (
     setFormData({...formData, [e.target.id]: e.target.value})
-  }
+  )
+
   console.log(formData)
-  
-  const handleSubmit = async (e) => {
+
+  const hanldeSubmit = async (e) => {
     e.preventDefault(); //prevent refreshing the page when refreshing the data
     try {
+      dispatch(signInStart());
       const res = await fetch('/api/auth/signin', {
         method: 'POST',
         headers: {
@@ -28,33 +31,33 @@ const SignIn = () => {
       })
       const data = await res.json();
       console.log(data)
-      setLoading(false);
       if (data.success === false) {
-        setError(true);
+        dispatch(signInFailure(data))
         return;
       }
+      dispatch(signInSuccess(data));
       navigate('/')
     } catch (error) {
-      setLoading(false)
-      setError(true)
+      dispatch(signInFailure(error))
     }
   }
+
   return (
     <div className="max-w-lg mx-auto p-5">
       <h1 className="text-3xl text-center font-semibold my-7">Sign In</h1>
-      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-        <input  id="email" type="email" placeholder="Email" className="bg-slate-200 p-3 rounded-lg" onChange={handleChange}></input>
-        <input  id="password" type="password" placeholder="Password" className="bg-slate-200 p-3 rounded-lg" onChange={handleChange}></input>
-        <button className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95">
-          {loading ? "Loading" : "Sign In"}
+      <form className="flex flex-col gap-4 " onSubmit={hanldeSubmit}>
+        <input type='email' placeholder='Email' id='email' className="bg-slate-100 p-3 rounded-lg"onChange={handleChange}></input>
+        <input type='password' placeholder='Password' id='password' className="bg-slate-100 p-3 rounded-lg"onChange={handleChange}></input>
+        <button disabled={loading} className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95">
+          {loading ? 'Loading..':'Sign in'}
         </button>
-        
+    
       </form>
       <div className="flex mt-5">
-        <p>No account?</p>
-        <Link to='/sign-up'><span className="text-blue-500">Sign Up</span></Link>
+        <p>Create a new account?</p>
+        <Link to='/sign-up'><span className="text-blue-500">Sign up</span></Link>
       </div>
-      <p className="text-red-600 my-3">{error && "Something went wrong!"}</p>
+      <p className="text-red-600 my-3">{error ? error.message || "Something went wrong!" :''}</p>
     </div>
   )
 }
