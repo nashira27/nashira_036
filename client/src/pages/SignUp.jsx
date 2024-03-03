@@ -45,6 +45,8 @@ const SignUp = () => {
     <div className="max-w-lg mx-auto p-5">
       <h1 className="text-3xl text-center font-semibold my-7">Sign Up</h1>
       <form className="flex flex-col gap-4 " onSubmit={hanldeSubmit}>
+         <input type='text' placeholder='First name' id='firstname' className="bg-slate-100 p-3 rounded-lg"onChange={handleChange}></input>
+        <input type='text' placeholder='Last name' id='lastname' className="bg-slate-100 p-3 rounded-lg"onChange={handleChange}></input>
         <input type='text' placeholder='Username' id='username' className="bg-slate-100 p-3 rounded-lg"onChange={handleChange}></input>
         <input type='email' placeholder='Email' id='email' className="bg-slate-100 p-3 rounded-lg"onChange={handleChange}></input>
         <input type='password' placeholder='Password' id='password' className="bg-slate-100 p-3 rounded-lg"onChange={handleChange}></input>

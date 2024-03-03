@@ -1,9 +1,19 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux';
 
 const Header = () => {
+  const dispatch = useDispatch();
   const {currentUser} = useSelector((state)=> state.user)
+
+  const handleSignOut = async () => {
+    try {
+      await fetch('/api/auth/signout');
+      dispatch(signOut())
+    } catch(error){
+      console.log(error)
+    }
+  }
   return (
     <div className="bg-slate-700  text-black">
         <div className="flex justify-between items-center max-w-6xl mx-auto p-3">
@@ -16,7 +26,7 @@ const Header = () => {
                   ):(
                     <Link to='/sign-in'><li>Sign In</li></Link>
                   )}
-                { currentUser && <Link to='/'><li>Sign Out</li></Link>}
+                { currentUser && <li onClick={handleSignOut}>Sign Out</li>}
             </ul>
         </div>
     </div>
